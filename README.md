@@ -1,5 +1,5 @@
 # Busy Beaver
-A Turing-Machine in Go to experiment on the **busy beaver problem**.
+Simplest 2-state Turing-Machine in Go to experiment on the **busy beaver problem**.
 
 It is as an appendix for a small [article](article.pdf) in french that I wrote as part of an assignment for my university.
 
