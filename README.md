@@ -6,7 +6,7 @@ It is as an appendix for a small [article](article.pdf) in french that I wrote a
 References:
 - [https://en.wikipedia.org/wiki/Busy_beaver](https://en.wikipedia.org/wiki/Busy_beaver)
 
-To try it, just run install **go** and run:
+To try it, just install go and run:
 ```
 go build
 ./busy-beaver
