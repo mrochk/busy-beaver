@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	tapeSize     = 51 // The tape has a fixed size.
-	alphabetSize = 2  // Alphabet = {0, 1}
-	diverging    = 20 // We consider machine as diverging after this n of iters.
+	tapeSize     = 31                 // The tape has a fixed size.
+	alphabetSize = 2                  // Alphabet = {0, 1}
+	diverging    = (tapeSize + 1) / 2 // We consider machine as diverging after this n of iters.
 )
 
 type Input struct {
@@ -75,7 +75,7 @@ func (tm *TuringMachine) step() {
 func (tm *TuringMachine) run() {
 	for count := 0; tm.state != "H"; count++ {
 		if count >= diverging {
-			fmt.Println("Machine is probably diverging.")
+			fmt.Println("Err => machine is probably divergent")
 			return
 		}
 		tm.step()
@@ -102,15 +102,19 @@ func (i Instructions) String() string {
 	return out
 }
 
-func (t tape) String() string {
-	out := ""
-	for i := range t {
-		if t[i] {
+func (tm *TuringMachine) String() string {
+	out := "["
+	for i := range tm.tape {
+		if tm.tape[i] {
 			out += "1 "
 		} else {
 			out += "0 "
 		}
 	}
-	out += "\nScore = " + fmt.Sprint(t.getScore()) + "\n\n"
-	return out
+	out = out[:len(out)-1] + "]\n"
+	for i := 0; i < tm.position; i++ {
+		out += "  "
+	}
+	out += " ^\n"
+	return out + "Score => " + fmt.Sprint(tm.tape.getScore()) + "\n\n"
 }
