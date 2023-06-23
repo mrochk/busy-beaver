@@ -7,6 +7,7 @@ The machines are described in [text-files](./machines) with the following struct
 | _Current State_ | _Symbol Read_ | _Symbol Written_ | _Direction_ | _Next State_ |
 |:---------------:|:-------------:|:----------------:|:-----------:|:------------:|
 |        $0, 1, ..., \|States\|$        |       0\|1       |        0\|1       |     L\|R     |      $0, 1, ..., \|States\|$     |
+|        ...       |       ...       |        ...       |     ...     |      ...    |
 
 
 To try it, just install go and run:
