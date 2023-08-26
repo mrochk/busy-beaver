@@ -1,4 +1,4 @@
-package main
+package tm
 
 import (
 	"bufio"
@@ -8,10 +8,18 @@ import (
 )
 
 const (
-	tapeSize     = 31                 // The tape has a fixed size.
-	alphabetSize = 2                  // Alphabet = {0, 1}
-	diverging    = (tapeSize + 1) / 2 // We consider machine as diverging after this n of iters.
+	tapeSize     = 31 // The tape has a fixed size.
+	alphabetSize = 2  // Alphabet = {0, 1}
+	diverging    = (tapeSize + 1) / 2
 )
+
+type TuringMachine struct {
+	tape         tape
+	position     int
+	state        string
+	states       int
+	instructions Instructions
+}
 
 type Input struct {
 	symbol bool
@@ -24,25 +32,24 @@ type Output struct {
 	direction bool
 }
 
-type tape [tapeSize]bool
-
 type Instructions map[Input]Output
 
-type TuringMachine struct {
-	tape         tape
-	position     int
-	state        string
-	states       int
-	instructions Instructions
-}
+type tape [tapeSize]bool
 
-func newTuringMachine(states int) *TuringMachine {
+func NewTuringMachine(states int) *TuringMachine {
 	return &TuringMachine{
 		position:     tapeSize / 2,
 		states:       states,
 		state:        "0",
 		instructions: make(Instructions, states*alphabetSize),
 	}
+}
+
+func (tm *TuringMachine) Run(filename string) {
+	file, _ := os.Open(filename)
+	tm.setInstructions(file)
+	tm.run()
+	fmt.Print(tm)
 }
 
 func (tm *TuringMachine) setInstructions(file *os.File) {
@@ -54,6 +61,16 @@ func (tm *TuringMachine) setInstructions(file *os.File) {
 		input := Input{state: arr[0], symbol: (arr[1] == "1")}
 		output := Output{symbol: arr[2] == "1", direction: arr[3] == "R", state: arr[4]}
 		tm.instructions[input] = output
+	}
+}
+
+func (tm *TuringMachine) run() {
+	for count := 0; tm.state != "H"; count++ {
+		if count >= diverging {
+			fmt.Fprintln(os.Stderr, "ERROR: machine is divergent")
+			return
+		}
+		tm.step()
 	}
 }
 
@@ -70,16 +87,6 @@ func (tm *TuringMachine) step() {
 		tm.position--
 	}
 	tm.state = output.state
-}
-
-func (tm *TuringMachine) run() {
-	for count := 0; tm.state != "H"; count++ {
-		if count >= diverging {
-			fmt.Println("Err => machine is probably divergent")
-			return
-		}
-		tm.step()
-	}
 }
 
 func (t tape) getScore() int {
@@ -102,7 +109,7 @@ func (i Instructions) String() string {
 	return out
 }
 
-func (tm *TuringMachine) String() string {
+func (tm TuringMachine) String() string {
 	out := "["
 	for i := range tm.tape {
 		if tm.tape[i] {
@@ -116,5 +123,5 @@ func (tm *TuringMachine) String() string {
 		out += "  "
 	}
 	out += " ^\n"
-	return out + "Score => " + fmt.Sprint(tm.tape.getScore()) + "\n\n"
+	return out + "Score: " + fmt.Sprint(tm.tape.getScore()) + "\n\n"
 }
